@@ -9,9 +9,9 @@
 redis-cli -x AI.MODELSET m TF CPU INPUTS input OUTPUTS MobilenetV2/Predictions/Reshape_1 < ./mobilenet_v2_1.4_224_frozen.pb
 ```
 
-* Upload the `animal_name.py` script to redis using `upload_py_scripy.py`:
+* Upload the `animal_name.py` script to redis using `gears.py`:
 ```
-python upload_py_scripy.py --file-path ./animal_name.py
+python gears.py ./animal_name.py
 ```
 
 * Enter the `CameraCload/` directory and perform:
