@@ -14,7 +14,7 @@ redis-cli -x AI.MODELSET m TF CPU INPUTS input OUTPUTS MobilenetV2/Predictions/R
 python gears.py ./animal_name.py
 ```
 
-* Enter the `CameraCload/` directory and perform:
+* Enter the `CameraCloud/` directory and perform:
 	* `npm install`
 	* `PORT=3000 STREAM=all node server.js`
 	* `PORT=3001 STREAM=cats node server.js`
