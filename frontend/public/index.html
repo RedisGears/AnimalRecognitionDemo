@@ -8,16 +8,13 @@
 		// sending a send event to websocket server
 		ws.send('connected')
 	}
-	// event emmited when receiving message 
+	// event emmited when receiving message
 	ws.onmessage = function(ev) {
 		var image = document.querySelector('#images img');
 		image.src = ev.data;
 	}
 </script>
 <style>
-.logoEdgeX {
-	max-height: 50px;
-}
 .logoRedis {
 	max-height: 70px;
 }
@@ -29,7 +26,7 @@
 <body>
 	<header style="text-align: center;">
 		<div>
-			<img class="logoRedis" src="Redis.png"> 
+			<img class="logoRedis" src="Redis.png">
 			<img class="logoRedis" src="Redis-Labs.png">
 		</div>
 	</header>

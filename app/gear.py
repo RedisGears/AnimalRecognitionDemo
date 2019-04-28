@@ -21,7 +21,6 @@ def toOneList(l):
             res.append(val)
     return res
 
-
 def addToGraphRunner(x):
     # converting the image to matrix of colors
     data = io.BytesIO(x['img'])
@@ -32,7 +31,7 @@ def addToGraphRunner(x):
     v1 = redisAI.createTensorFromValues('FLOAT', [1, 224, 224, 3], toOneList(newImg.tolist()))
 
     # creating the graph runner, 'g1' is the key in redis on which the graph is located
-    graphRunner = redisAI.createModelRunner('m')
+    graphRunner = redisAI.createModelRunner('mobilenet:model')
     redisAI.modelRunnerAddInput(graphRunner, 'input', v1)
     redisAI.modelRunnerAddOutput(graphRunner, 'MobilenetV2/Predictions/Reshape_1')
 
@@ -44,17 +43,14 @@ def addToGraphRunner(x):
 
     return (index[str(res.index(res1[0]) - 1)][1], x['img'])
 
-
 def addToStream(x):
     # save animal name into a new stream
     redisgears.executeCommand('xadd', 'cats', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x[1]))
-
 
 def shouldTakeFrame(x):
     global framesToDrop
     framesToDrop += 1
     return framesToDrop % 5 == 0
-
 
 def passAll(x):
     redisgears.executeCommand('xadd', 'all', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x['img']))

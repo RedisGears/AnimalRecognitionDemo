@@ -1,0 +1,30 @@
+version: '3'
+services:
+  redis:
+    build: ./redis/.
+    ports:
+      - "6379:6379"
+  weball:
+    build: ./frontend/.
+    ports:
+      - "3000:3000"
+    environment:
+      - "STREAM=all"
+      - "REDIS_HOST=redis"
+    depends_on:
+      - redis
+  webcats:
+    build: ./frontend/.
+    ports:
+      - "3001:3000"
+    environment:
+      - "STREAM=cats"
+      - "REDIS_HOST=redis"
+    depends_on:
+      - redis
+  app:
+    build: ./app/.
+    depends_on:
+      - redis
+    command: ['init.py', '--url', 'redis://redis:6379']
+# TODO video capturing, but this is too different on mac / linux: https://apple.stackexchange.com/questions/265281/using-webcam-connected-to-macbook-inside-a-docker-container

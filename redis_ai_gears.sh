@@ -1,1 +1,0 @@
-LD_LIBRARY_PATH=/home/meir/work/RedisAI/deps/install/lib/ redis-server --loadmodule /home/meir/work/RedisAI/build/redisai.so --loadmodule /home/meir/work/RedisGears/redisgears.so PythonHomeDir /home/meir/work/RedisGears/src/deps/cpython/

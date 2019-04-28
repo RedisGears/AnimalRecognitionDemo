@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', help='Input file (leave empty to use webcam)', nargs='?', type=str, default=None)
     parser.add_argument('-o', '--output', help='Output stream key name', type=str, default='camera:0')
-    parser.add_argument('-u', '--url', help='Redis URL', type=str, default='redis://127.0.0.1:6379')
+    parser.add_argument('-u', '--url', help='Redis URL', type=str, default='redis://localhost:6379')
     parser.add_argument('--fmt', help='Frame storage format', type=str, default='.jpg')
     parser.add_argument('--fps', help='Frames per second (webcam)', type=float, default=15.0)
     parser.add_argument('--maxlen', help='Maximum length of output stream', type=int, default=1000)
