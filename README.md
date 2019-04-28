@@ -5,12 +5,16 @@ Docker, Python 2 and pip
 
 ## Running the Demo
 ```
-docker-compose up
+$ git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
+$ cd AnimalRecognitionDemo
+# If you don't have it already, install https://git-lfs.github.com/
+$ git lfs install; git lfs checkout
+$ docker-compose up
 ```
-Camera Capturing
+Camera Capturing needs to happen in a second terminal
 ```
-pip install camera/requirements.txt
-python camera/read_camera.py
+$ pip install camera/requirements.txt
+$ python camera/read_camera.py
 ```
 
 ## UI
