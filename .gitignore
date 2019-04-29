@@ -1,2 +1,2 @@
-CameraCloud/node_modules/*
-CameraCloud/package-lock.json
+frontend/node_modules/*
+frontend/package-lock.json

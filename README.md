@@ -1,28 +1,28 @@
 # AnimalRecognitionDemo
 
+This demo combines several [Redis](https://redis.io) Data structures and [Redis Modules](https://redis.io/topics/modules-intro) to filter a stream of images that contain cats.  It utilises Redis Streams for capturing the input video stream:`all`.  [RedisGears](https://oss.redislabs.com/redisgears/) will process this stream and will call [RedisAI](https://oss.redislabs.com/redisai/) for image classification with MobilenetV2.  In case the stream contains cats, it will forward the images to a  stream:`cats`.
+
+## Architecture
+![Architecture](/architecture.png)
+
+
+## Requirements
+Docker and Python 2
+
 ## Running the Demo
-
-* run redis with RedisAI and RedisGears loaded.
-
-* Uploaded the mobilenet_v2_1.4_224_frozen.pb model into a key called `m`:
 ```
-redis-cli -x AI.MODELSET m TF CPU INPUTS input OUTPUTS MobilenetV2/Predictions/Reshape_1 < ./mobilenet_v2_1.4_224_frozen.pb
+$ git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
+$ cd AnimalRecognitionDemo
+# If you don't have it already, install https://git-lfs.github.com/
+$ git lfs install; git lfs checkout
+$ docker-compose up
 ```
-
-* Upload the `animal_name.py` script to redis using `gears.py`:
+Open a second terminal for the video capturing.
 ```
-python gears.py ./animal_name.py
-```
-
-* Enter the `CameraCloud/` directory and perform:
-	* `npm install`
-	* `PORT=3000 STREAM=all node server.js`
-	* `PORT=3001 STREAM=cats node server.js`
-
-* Start streaming frames to the redis:
-```
-python read_camera.py
+$ pip install camera/requirements.txt
+$ python camera/read_camera.py
 ```
 
+## UI
 * On `http://localhost:3000` you will be able to see all the captured frames
 * On `http://localhost:3001` you will see only cats
