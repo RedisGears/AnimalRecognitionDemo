@@ -19,7 +19,7 @@ $ docker-compose up
 ```
 Open a second terminal for the video capturing.
 ```
-$ pip install camera/requirements.txt
+$ pip install -r camera/requirements.txt
 $ python camera/read_camera.py
 ```
 
