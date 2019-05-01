@@ -14,7 +14,7 @@ Docker and Python 2
 $ git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
 $ cd AnimalRecognitionDemo
 # If you don't have it already, install https://git-lfs.github.com/
-$ git lfs install; git lfs checkout
+$ git lfs install && git lfs fetch && git lfs checkout
 $ docker-compose up
 ```
 Open a second terminal for the video capturing.
