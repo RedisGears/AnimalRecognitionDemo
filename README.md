@@ -26,3 +26,6 @@ $ python camera/read_camera.py
 ## UI
 * On `http://localhost:3000` you will be able to see all the captured frames
 * On `http://localhost:3001` you will see only cats
+
+## Limitations
+This demo aimed at ease of setup and is hence heavily relying on docker.  Better performance and a higher FPS can be achieved by runninng this demo outside docker.  To control the FPS, look [here]](https://github.com/RedisGears/AnimalRecognitionDemo/blob/master/app/gear.py#L53)
