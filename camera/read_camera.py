@@ -1,7 +1,10 @@
 import argparse
 import cv2
 import redis
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 class Webcam:
     def __init__(self, infile=0, fps=15.0):
