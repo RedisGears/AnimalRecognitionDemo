@@ -57,8 +57,8 @@ def passAll(x):
 
 # creating execution plane
 gearsCtx('StreamReader').\
-    filter(shouldTakeFrame).\
     foreach(passAll).\
+    filter(shouldTakeFrame).\
     map(addToGraphRunner).\
     filter(lambda x: 'cat' in x[0]).\
     foreach(addToStream).\
