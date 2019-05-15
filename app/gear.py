@@ -50,7 +50,7 @@ def addToStream(x):
 def shouldTakeFrame(x):
     global framesToDrop
     framesToDrop += 1
-    return framesToDrop % 5 == 0
+    return framesToDrop % 10 == 0
 
 def passAll(x):
     redisgears.executeCommand('xadd', 'all', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x['img']))
