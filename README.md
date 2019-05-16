@@ -22,7 +22,7 @@ To run the demo:
 ```
 $ git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
 $ cd AnimalRecognitionDemo
-# If you don't have it already, install https://git-lfs.github.com/
+# If you don't have it already, install https://git-lfs.github.com/ (On OSX: brew install git-lfs)
 $ git lfs install && git lfs fetch && git lfs checkout
 $ docker-compose up
 ```
