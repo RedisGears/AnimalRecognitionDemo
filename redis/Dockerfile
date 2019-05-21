@@ -1,5 +1,9 @@
-FROM redisai/redisai:0.2.0 as redisai
-FROM redislabs/redisgears:0.2.1 as redisgears
+# FROM redisai/redisai:0.2.0 as redisai
+# FROM redislabs/redisgears:0.2.1 as redisgears
+
+# FROM redislabs/redisedge-arm:arm64-bionic
+
+FROM raffapen/redisedge-arm:arm64-bionic
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
 ENV RUNTIME_DEPS "python python-setuptools python-pip python-dev build-essential libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1"
@@ -13,7 +17,7 @@ RUN set -ex;\
 
 COPY --from=redisai /usr/lib/redis/modules/*.so* "$LD_LIBRARY_PATH"
 
-RUN pip install -t /usr/local/lib/python2.7/site-packages ${PYTHON_DEPS}
+RUN pip install -t /usr/local/lib/python3/site-packages ${PYTHON_DEPS}
 
 EXPOSE 6379
 ENTRYPOINT ["redis-server"]
