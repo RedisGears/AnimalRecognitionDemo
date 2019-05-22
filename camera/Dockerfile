@@ -1,6 +1,6 @@
 FROM python:2
 
-ENV RUNTIME_DEPS "python3-opencv"
+ENV RUNTIME_DEPS "python-opencv"
 
 RUN set -ex;\
     apt-get update;\
@@ -8,6 +8,6 @@ RUN set -ex;\
 
 WORKDIR /usr/src/app
 ADD read_camera.py ./
-RUN pip install opencv-python redis
+RUN pip install redis
 
 CMD [ "python", "./read_camera.py" ]
