@@ -7,16 +7,21 @@ FROM raffapen/redisedge-arm:arm64-bionic
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
 ENV DEBIAN_FRONTEND=noninteractive
-ENV RUNTIME_DEPS "libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1 \
-	python3 python3-setuptools python3-pip \
+ENV RUNTIME_DEPS "\
+	libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1 \
+	ca-certificates curl \
+	python3 python3-setuptools \
 	python3-opencv python3-imageio"
-ENV PYTHON_DEPS "setuptools wheel redis argparse pybase64"
+ENV PYTHON_DEPS "redis"
 
 WORKDIR /data
 
 RUN set -ex;\
     apt-get update;\
     apt-get install -y --no-install-recommends $RUNTIME_DEPS;
+
+RUN curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py; \
+	python3 /tmp/get-pip.py
 
 # COPY --from=redisedge ${LD_LIBRARY_PATH}/*.so ${LD_LIBRARY_PATH}/
 # COPY --from=redisedge /opt/redislabs/lib/modules/redisgears.so ${LD_LIBRARY_PATH}/
