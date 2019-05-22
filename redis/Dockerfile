@@ -3,11 +3,13 @@
 
 # FROM redislabs/redisedge-arm:arm64-bionic
 
-FROM raffapen/redisedge-arm:arm64-bionic # as redisedge
+FROM raffapen/redisedge-arm:arm64-bionic
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
-ENV RUNTIME_DEPS "python python-setuptools python-pip python-dev build-essential libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1"
-ENV PYTHON_DEPS "setuptools redis argparse imageio opencv-python pybase64 redisAI"
+ENV RUNTIME_DEPS "build-essential libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1 \
+	python3 python3-setuptools python3-pip python3-dev \
+	python3-opencv python3-imageio"
+ENV PYTHON_DEPS "setuptools redis argparse pybase64"
 
 WORKDIR /data
 
