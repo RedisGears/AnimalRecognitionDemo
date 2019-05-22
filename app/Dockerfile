@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV RUNTIME_DEPS "python3 python3-pip python3-opencv"
+ENV RUNTIME_DEPS "python3 python3-setuptools curl python3-opencv"
 
 RUN set -ex;\
     apt-get update;\
