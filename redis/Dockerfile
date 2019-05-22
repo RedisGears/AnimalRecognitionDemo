@@ -6,10 +6,11 @@
 FROM raffapen/redisedge-arm:arm64-bionic
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
-ENV RUNTIME_DEPS "build-essential libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1 \
-	python3 python3-setuptools python3-pip python3-dev \
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RUNTIME_DEPS "libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1 \
+	python3 python3-setuptools python3-pip \
 	python3-opencv python3-imageio"
-ENV PYTHON_DEPS "setuptools redis argparse pybase64"
+ENV PYTHON_DEPS "setuptools wheel redis argparse pybase64"
 
 WORKDIR /data
 
@@ -22,7 +23,7 @@ RUN set -ex;\
 # COPY --from=redisedge /opt/redislabs /opt/redislabs
 # COPY /opt/redislabs/lib/modules/redisgears.so ${LD_LIBRARY_PATH}/
                                                                                                                                                                     
-RUN pip install -t /usr/local/lib/python3/site-packages ${PYTHON_DEPS}
+RUN pip3 install -t /usr/local/lib/python3/site-packages ${PYTHON_DEPS}
 
 EXPOSE 6379
 ENTRYPOINT ["redis-server"]
