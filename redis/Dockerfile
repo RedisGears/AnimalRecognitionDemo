@@ -4,6 +4,7 @@
 # FROM redislabs/redisedge-arm:arm64-bionic
 
 FROM raffapen/redisedge-arm:arm64-bionic
+# FROM raffapen/redisedge:x64-bionic
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
 ENV DEBIAN_FRONTEND=noninteractive
@@ -20,7 +21,7 @@ RUN set -ex;\
 	apt-get update;\
 	apt-get install -y --no-install-recommends $RUNTIME_DEPS;
 
-RUN curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py; \
+RUN curl -s https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py; \
 	python3 /tmp/get-pip.py
 
 # COPY --from=redisedge ${LD_LIBRARY_PATH}/*.so ${LD_LIBRARY_PATH}/
@@ -29,6 +30,8 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py; \
 # COPY /opt/redislabs/lib/modules/redisgears.so ${LD_LIBRARY_PATH}/
                                                                                                                                                                     
 RUN pip3 install -t /usr/local/lib/python3/site-packages ${PYTHON_DEPS}
+
+RUN apt-get install -y libswscale4 libtbb2 libjpeg8 libpng16-16 libtiff5 libavformat57 zlib1g 
 
 EXPOSE 6379
 ENTRYPOINT ["redis-server"]

@@ -1,2 +1,2 @@
-opencv-python
+# opencv-python
 redis==3.2.1
