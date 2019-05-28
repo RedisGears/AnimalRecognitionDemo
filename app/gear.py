@@ -4,6 +4,7 @@ import redisgears
 import cv2
 import base64
 import redisAI
+import numpy
 
 framesToDrop = 0
 
@@ -27,8 +28,11 @@ def addToGraphRunner(x):
     dataM = imageio.imread(data).astype(dtype='float32')
     newImg = (cv2.resize(dataM, (224, 224)) / 128) - 1
 
+    l = numpy.asarray(newImg, dtype=numpy.float32)
+    img_ba = bytearray(l.tobytes())
+
     # converting the matrix color to Tensor
-    v1 = redisAI.createTensorFromValues('FLOAT', [1, 224, 224, 3], toOneList(newImg.tolist()))
+    v1 = redisAI.createTensorFromBlob('FLOAT', [1, 224, 224, 3], img_ba)
 
     # creating the graph runner, 'g1' is the key in redis on which the graph is located
     graphRunner = redisAI.createModelRunner('mobilenet:model')
@@ -45,7 +49,7 @@ def addToGraphRunner(x):
 
 def addToStream(x):
     # save animal name into a new stream
-    redisgears.executeCommand('xadd', 'cats', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x[1]))
+    redisgears.executeCommand('xadd', 'cats', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x[1]).decode('utf8'))
 
 def shouldTakeFrame(x):
     global framesToDrop
@@ -53,7 +57,7 @@ def shouldTakeFrame(x):
     return framesToDrop % 10 == 0
 
 def passAll(x):
-    redisgears.executeCommand('xadd', 'all', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x['img']))
+    redisgears.executeCommand('xadd', 'all', 'MAXLEN', '~', '1000', '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x['img']).decode('utf8'))
 
 # creating execution plane
 gearsCtx('StreamReader').\
