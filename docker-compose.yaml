@@ -4,6 +4,8 @@ services:
     build: ./redis/.
     ports:
       - "6379:6379"
+    args:
+      OSNICK: ${OSNICK:-bionic}
   weball:
     build: ./frontend/.
     ports:

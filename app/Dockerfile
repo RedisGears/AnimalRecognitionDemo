@@ -8,13 +8,12 @@ RUN set -ex;\
     apt-get update;\
     apt-get install -y --no-install-recommends $RUNTIME_DEPS;
 
-RUN curl -s https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py; \
+RUN curl -q -s https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py; \
 	python3 /tmp/get-pip.py
 
 WORKDIR /app
 ADD . /app
 
-RUN set -ex; \
-    pip3 install -r requirements.txt;
+RUN pip3 install -r requirements.txt;
 
 ENTRYPOINT [ "python3" ]
