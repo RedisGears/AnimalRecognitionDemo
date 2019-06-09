@@ -1,10 +1,8 @@
 FROM python:2
 
-ENV RUNTIME_DEPS "python-opencv"
-
 RUN set -ex;\
     apt-get update;\
-    apt-get install -y --no-install-recommends $RUNTIME_DEPS;
+    apt-get install -y python-opencv
 
 WORKDIR /usr/src/app
 ADD read_camera.py ./
