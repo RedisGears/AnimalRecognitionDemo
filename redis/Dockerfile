@@ -1,7 +1,7 @@
 ARG OSNICK=bionic
 
 #----------------------------------------------------------------------------------------------
-FROM raffapen/redisedgevision-${OSNICK}:latest
+FROM redislabs/redisedgevision-${OSNICK}:latest
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
 
