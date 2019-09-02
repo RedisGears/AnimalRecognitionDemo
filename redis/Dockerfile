@@ -3,7 +3,7 @@ FROM redislabs/redisgears:0.2.1 as redisgears
 
 ENV LD_LIBRARY_PATH /usr/lib/redis/modules/
 ENV RUNTIME_DEPS "python python-setuptools python-pip python-dev build-essential libglib2.0-0 libsm6 libxext6 libfontconfig1 libxrender1"
-ENV PYTHON_DEPS "setuptools redis argparse imageio opencv-python pybase64 redisAI"
+ENV PYTHON_DEPS "setuptools redis argparse imageio opencv-python pybase64 redisAI==0.3.0"
 
 WORKDIR /data
 
