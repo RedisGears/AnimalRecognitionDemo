@@ -2,7 +2,7 @@ import argparse
 import cv2
 import redis
 try:
-    import urlparse
+    import urllib.parse
 except ImportError:
     import urllib.parse as urlparse
 
@@ -17,7 +17,7 @@ class Webcam:
         self.count = -1
         return self
 
-    def next(self): # Python 2.7
+    def __next__(self): # Python 2.7
         self.count += 1
 
         # Read image
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Set up Redis connection
-    url = urlparse.urlparse(args.url)
+    url = urllib.parse.urlparse(args.url)
     conn = redis.Redis(host=url.hostname, port=url.port)
     if not conn.ping():
         raise Exception('Redis unavailable')
@@ -61,4 +61,4 @@ if __name__ == '__main__':
             'image': data.tobytes()
         }
         _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', '1000', '*', 'count', msg['count'], 'img', msg['image'])
-        print('count: {} id: {}'.format(count, _id))
+        print(('count: {} id: {}'.format(count, _id)))
