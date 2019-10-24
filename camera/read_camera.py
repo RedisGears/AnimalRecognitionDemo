@@ -1,17 +1,23 @@
 import argparse
 import cv2
 import redis
+import time
+import sys
+
 try:
     import urllib.parse
 except ImportError:
     import urllib.parse as urlparse
 
+IMAGE_WIDTH = 640
+IMAGE_HEIGHT = 480
+
 class Webcam:
     def __init__(self, infile=0, fps=15.0):
         self.cam = cv2.VideoCapture(infile)
         self.cam.set(cv2.CAP_PROP_FPS, fps)
-        self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, IMAGE_WIDTH)
+        self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, IMAGE_HEIGHT)
 
     def __iter__(self):
         self.count = -1
@@ -41,6 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('--fmt', help='Frame storage format', type=str, default='.jpg')
     parser.add_argument('--fps', help='Frames per second (webcam)', type=float, default=15.0)
     parser.add_argument('--maxlen', help='Maximum length of output stream', type=int, default=1000)
+    parser.add_argument('--test', help='transmit image instead of reading webcam', type=str)
     args = parser.parse_args()
 
     # Set up Redis connection
@@ -48,17 +55,40 @@ if __name__ == '__main__':
     conn = redis.Redis(host=url.hostname, port=url.port)
     if not conn.ping():
         raise Exception('Redis unavailable')
+    print('Connected to Redis')
+    sys.stdout.flush()
 
-    if args.infile is None:
-        loader = Webcam(infile=0, fps=args.fps)
+    if args.test is None:
+        print('Operating in camera mode')
+        sys.stdout.flush()
+        if args.infile is None:
+            loader = Webcam(infile=0, fps=args.fps)
+        else:
+            loader = Webcam(infile=int(args.infile), fps=args.fps)
+
+        for (count, img) in loader:
+            _, data = cv2.imencode(args.fmt, img)
+            msg = {
+                'count': count,
+                'image': data.tobytes()
+            }
+            _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', '1000', '*', 'count', msg['count'], 'img', msg['image'])
+            print('count: {} id: {}'.format(count, _id))
+            sys.stdout.flush()
     else:
-        loader = Webcam(infile=int(args.infile), fps=args.fps)
-
-    for (count, img) in loader:
+        print('Operating in test mode')
+        sys.stdout.flush()
+        img0 = cv2.imread(args.test)
+        img = cv2.resize(img0, (IMAGE_WIDTH, IMAGE_HEIGHT))
         _, data = cv2.imencode(args.fmt, img)
-        msg = {
-            'count': count,
-            'image': data.tobytes()
-        }
-        _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', '1000', '*', 'count', msg['count'], 'img', msg['image'])
-        print(('count: {} id: {}'.format(count, _id)))
+        count = 1
+        while True:
+            msg = {
+                'count': count,
+                'image': data.tobytes()
+            }
+            _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', '1000', '*', 'count', msg['count'], 'img', msg['image'])
+            # print('count: {} rc: {} id: {}'.format(count, rc, _id))
+            # sys.stdout.flush()
+            count += 1
+            time.sleep(0.1)

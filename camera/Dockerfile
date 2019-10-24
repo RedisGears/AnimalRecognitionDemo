@@ -1,7 +1,10 @@
 FROM python:2
 
+RUN pip install -q opencv-python redis
+
 WORKDIR /usr/src/app
+
 ADD read_camera.py ./
-RUN pip install opencv-python redis
+ADD *.jpg ./
 
 CMD [ "python", "./read_camera.py" ]
