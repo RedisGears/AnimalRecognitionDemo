@@ -3,6 +3,7 @@ import cv2
 import redis
 import time
 import sys
+import os
 
 try:
     import urllib.parse
@@ -11,6 +12,8 @@ except ImportError:
 
 IMAGE_WIDTH = 640
 IMAGE_HEIGHT = 480
+
+MAX_IMAGES = 5 # 1000
 
 class Webcam:
     def __init__(self, infile=0, fps=15.0):
@@ -47,7 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--fmt', help='Frame storage format', type=str, default='.jpg')
     parser.add_argument('--fps', help='Frames per second (webcam)', type=float, default=15.0)
     parser.add_argument('--maxlen', help='Maximum length of output stream', type=int, default=1000)
-    parser.add_argument('--test', help='transmit image instead of reading webcam', type=str)
+    parser.add_argument('--test', help='transmit image instead of reading webcam', action="store_true")
     args = parser.parse_args()
 
     # Set up Redis connection
@@ -76,9 +79,10 @@ if __name__ == '__main__':
             print('count: {} id: {}'.format(count, _id))
             sys.stdout.flush()
     else:
-        print('Operating in test mode')
+        image_file = os.environ['ANIMAL'] + '.jpg'
+        print('Operating in test mode with image ' + image_file)
         sys.stdout.flush()
-        img0 = cv2.imread(args.test)
+        img0 = cv2.imread(image_file)
         img = cv2.resize(img0, (IMAGE_WIDTH, IMAGE_HEIGHT))
         _, data = cv2.imencode(args.fmt, img)
         count = 1
@@ -87,7 +91,7 @@ if __name__ == '__main__':
                 'count': count,
                 'image': data.tobytes()
             }
-            _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', '1000', '*', 'count', msg['count'], 'img', msg['image'])
+            _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', str(MAX_IMAGES), '*', 'count', msg['count'], 'img', msg['image'])
             # print('count: {} rc: {} id: {}'.format(count, rc, _id))
             # sys.stdout.flush()
             count += 1

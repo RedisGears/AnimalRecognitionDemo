@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ $VERBOSE == 1 ]] && set -x
+# [[ $VERBOSE == 1 ]] && set -x
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"  
 cd $HERE/..
@@ -14,53 +14,77 @@ fi
 PROJECT=catsndogs
 DOCKER_LOG=/tmp/cats-n-dogs.log
 SPEC="--no-ansi -p $PROJECT -f docker-compose.yaml -f tests/cats-n-dogs.yaml"
+[[ $REBUILD == 1 ]] && BUILD_ARG=--build
 
 rm -f $DOCKER_LOG
 
 start() {
 	if [[ $VERBOSE == 1 ]]; then
-		ANIMAL=$1 docker-compose $SPEC up -d
+		docker-compose $SPEC up $BUILD_ARG -d
 	else
-		ANIMAL=$1 docker-compose $SPEC up -d >> $DOCKER_LOG 2>&1
+		docker-compose $SPEC up $BUILD_ARG -d >> $DOCKER_LOG 2>&1
 	fi
+	BUILD_ARG=''
 }
 
 stop() {
 	if [[ $VERBOSE == 1 ]]; then
-		ANIMAL=$1 docker-compose $SPEC down -v --remove-orphans
+		docker-compose $SPEC down -v --remove-orphans
 	else
-		ANIMAL=$1 docker-compose $SPEC down -v --remove-orphans >> $DOCKER_LOG 2>&1
+		docker-compose $SPEC down -v --remove-orphans >> $DOCKER_LOG 2>&1
 	fi
 }
 
-cats_demo() {
-	echo "Testing ${1}s ..."
-	# local PROJECT=${PROJECT}_$1
-	start $1
-	sleep 3
-	num_cats=$(redis-cli $host_arg xlen cats | cat)
-	stop $1
+build() {
+	if [[ $VERBOSE == 1 ]]; then
+		docker-compose $SPEC build
+	else
+		docker-compose $SPEC build >> $DOCKER_LOG 2>&1
+	fi
 }
 
-if [[ $1 == help ]]; then
-	echo "$0: [start ANIMAL|stop|help]"
+show_logs() {
+	docker-compose $SPEC logs $*
+}
+
+cats_demo() {
+	echo "Testing ${ANIMAL}s ..."
+	start
+	sleep 3
+	num_cats=$(redis-cli $host_arg xlen cats | cat)
+	if [[ $VERBOSE == 1 ]]; then
+		echo "num_cats=$num_cats"
+		show_logs
+	else
+		echo "num_cats=$num_cats" >> $DOCKER_LOG
+		show_logs >> $DOCKER_LOG
+	fi
+	stop
+}
+
+cmd=$1
+shift
+if [[ $cmd == help ]]; then
+	echo "[ANIMAL=cat|dog] [VERBOSE=0|1] [REBUILD=0|1] $0 [start|stop|build|logs|help]"
 	exit 0
-elif [[ $1 == start ]]; then
-	shift
-	VERBOSE=1 start $1
-elif [[ $1 == stop ]]; then
-	shift
-	VERBOSE=1 stop $1
+elif [[ $cmd == start ]]; then
+	start
+elif [[ $cmd == stop ]]; then
+	stop
+elif [[ $cmd == build ]]; then
+	build
+elif [[ $cmd == logs ]]; then
+	show_logs $*
 else
-	cats_demo cat
-	if [[ $num_cats == 0 ]]; then
+	ANIMAL=cat cats_demo
+	if [[ -z $num_cats || $num_cats == 0 ]]; then
 		echo "cats: FAIL"
 		exit 1
 	fi
 	echo "cats: OK"
 
-	cats_demo dog
-	if [[ $num_cats != 0 ]]; then
+	ANIMAL=dog cats_demo
+	if [[ -z $num_cats || $num_cats != 0 ]]; then
 		echo "dogs: FAIL"
 		exit 1
 	fi

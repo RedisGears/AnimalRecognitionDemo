@@ -6,4 +6,4 @@ else
 	host_arg="-h $(echo $DOCKER_HOST|cut -d: -f1)"
 fi
 
-redis-cli $host_arg lrange log 0 -1 | cat
+redis-cli $host_arg xrange log - + | cat

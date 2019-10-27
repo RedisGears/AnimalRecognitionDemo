@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master.svg?style=svg)](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master) 
+
 # AnimalRecognitionDemo
 
 This demo combines several [Redis](https://redis.io) data structures and [Redis Modules](https://redis.io/topics/modules-intro)

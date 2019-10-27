@@ -1,9 +1,11 @@
 version: '3'
 services:
   camera:
-    build: camera
+    build:
+      context: camera
+      dockerfile: Dockerfile.debian
     depends_on:
       - redis
     environment:
-      - ANIMAL=cat
-    command: ['python', './read_camera.py', '-u', 'redis://redis:6379', '--test', '${ANIMAL}.jpg']
+      - ANIMAL
+    command: python ./read_camera.py -u redis://redis:6379 --test
