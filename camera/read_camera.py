@@ -1,3 +1,4 @@
+
 import argparse
 import cv2
 import redis
@@ -13,7 +14,7 @@ except ImportError:
 IMAGE_WIDTH = 640
 IMAGE_HEIGHT = 480
 
-MAX_IMAGES = 5 # 1000
+MAX_IMAGES = 1000 # 5
 
 class Webcam:
     def __init__(self, infile=0, fps=15.0):
@@ -75,7 +76,7 @@ if __name__ == '__main__':
                 'count': count,
                 'image': data.tobytes()
             }
-            _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', '1000', '*', 'count', msg['count'], 'img', msg['image'])
+            _id = conn.execute_command('xadd', args.output, 'MAXLEN', '~', str(MAX_IMAGES), '*', 'count', msg['count'], 'img', msg['image'])
             print('count: {} id: {}'.format(count, _id))
             sys.stdout.flush()
     else:

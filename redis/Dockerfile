@@ -20,3 +20,7 @@ ENTRYPOINT ["redis-server"]
 CMD ["--loadmodule", "/usr/lib/redis/modules/redisai.so", \
 	 "--loadmodule", "/usr/lib/redis/modules/redisgears.so", \
 	 "PythonHomeDir", "/opt/redislabs/lib/modules/python3/"]
+
+# ADD redisedge.conf /etc
+
+# CMD ['/etc/redisedge.conf']

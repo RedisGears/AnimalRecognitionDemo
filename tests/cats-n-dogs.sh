@@ -3,7 +3,7 @@
 # [[ $VERBOSE == 1 ]] && set -x
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"  
-cd $HERE/..
+cd $HERE
 
 if [[ -z $DOCKER_HOST ]]; then
 	host_arg=""
@@ -13,12 +13,15 @@ fi
 
 PROJECT=catsndogs
 DOCKER_LOG=/tmp/cats-n-dogs.log
-SPEC="--no-ansi -p $PROJECT -f docker-compose.yaml -f tests/cats-n-dogs.yaml"
-[[ $REBUILD == 1 ]] && BUILD_ARG=--build
+# --compatibility 
+SPEC="--no-ansi -p $PROJECT -f cats-n-dogs.yaml"
+[[ $REBUILD == 1 ]] && BUILD_ARG="--build"
 
 rm -f $DOCKER_LOG
 
 start() {
+	[[ -z $ANIMAL ]] && export ANIMAL=cat
+
 	if [[ $VERBOSE == 1 ]]; then
 		docker-compose $SPEC up $BUILD_ARG -d
 	else
@@ -29,10 +32,17 @@ start() {
 
 stop() {
 	if [[ $VERBOSE == 1 ]]; then
+		$HERE/show-stream-stat.sh
+		$HERE/show-log.sh
 		docker-compose $SPEC down -v --remove-orphans
 	else
+		#  --rmi local
 		docker-compose $SPEC down -v --remove-orphans >> $DOCKER_LOG 2>&1
 	fi
+}
+
+count() {
+	echo $(redis-cli $host_arg xlen cats | cat)
 }
 
 build() {
@@ -45,13 +55,23 @@ build() {
 
 show_logs() {
 	docker-compose $SPEC logs $*
+	./show-log.sh
+	./show-stream-stat.sh
 }
 
 cats_demo() {
 	echo "Testing ${ANIMAL}s ..."
 	start
-	sleep 3
-	num_cats=$(redis-cli $host_arg xlen cats | cat)
+	for ((i = 0; i < 3; i++)); do
+		sleep 5
+		[[ $VERBOSE == 1 ]] && ./show-stream-stat.sh
+		num_cats=$(count)
+		if [[ $num_cats > 0 ]]; then
+			break
+		fi
+	done
+	
+	num_cats=$(count)
 	if [[ $VERBOSE == 1 ]]; then
 		echo "num_cats=$num_cats"
 		show_logs
@@ -62,10 +82,14 @@ cats_demo() {
 	stop
 }
 
+help() {
+	echo "[ANIMAL=cat|dog] [VERBOSE=0|1] [REBUILD=0|1] $0 [start|stop|build|count|logs|help]"
+}
+
 cmd=$1
 shift
 if [[ $cmd == help ]]; then
-	echo "[ANIMAL=cat|dog] [VERBOSE=0|1] [REBUILD=0|1] $0 [start|stop|build|logs|help]"
+	help
 	exit 0
 elif [[ $cmd == start ]]; then
 	start
@@ -73,9 +97,12 @@ elif [[ $cmd == stop ]]; then
 	stop
 elif [[ $cmd == build ]]; then
 	build
+elif [[ $cmd == count ]]; then
+	echo $(count)
+	exit 0
 elif [[ $cmd == logs ]]; then
 	show_logs $*
-else
+elif [[ $cmd == "" ]]; then
 	ANIMAL=cat cats_demo
 	if [[ -z $num_cats || $num_cats == 0 ]]; then
 		echo "cats: FAIL"
@@ -90,5 +117,8 @@ else
 	fi
 
 	echo "dogs: OK"
+else
+	help
+	exit 0
 fi
 exit 0

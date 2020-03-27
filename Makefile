@@ -1,13 +1,12 @@
 
 start:
-ifeq ($(REBUILD),1)
-	@docker-compose up --build -d
-else
 	@docker-compose up -d
-endif
 
 stop:
 	@docker-compose down
+
+build:
+	@docker-compose build
 
 test:
 	@./tests/cats-n-dogs.sh
@@ -31,4 +30,4 @@ setup:
 		chmod +x /usr/local/bin/docker-compose ;\
 	fi
 
-.PHONY: start stop test camera setup
+.PHONY: start stop build test camera setup
