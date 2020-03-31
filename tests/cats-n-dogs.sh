@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ $VERBOSE == 1 ]] && set -x
+# [[ $VERBOSE == 1 ]] && set -x
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"  
 cd $HERE
