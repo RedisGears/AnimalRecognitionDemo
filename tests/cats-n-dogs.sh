@@ -14,7 +14,8 @@ fi
 PROJECT=catsndogs
 DOCKER_LOG=/tmp/cats-n-dogs.log
 # --compatibility 
-SPEC="--no-ansi -p $PROJECT -f cats-n-dogs.yaml"
+# --no-ansi 
+SPEC="-p $PROJECT -f cats-n-dogs.yaml"
 [[ $REBUILD == 1 ]] && BUILD_ARG="--build"
 
 rm -f $DOCKER_LOG
