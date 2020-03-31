@@ -11,8 +11,8 @@ jobs:
       - run:
           name: Setup Docker Compose
           command: |
-            apt-get -qq update -y
-            apt-get -q install -y curl ca-certificates make
+            sudo apt-get -qq update -y
+            sudo apt-get -q install -y curl ca-certificates make
             make setup
       - run:
           name: Test
