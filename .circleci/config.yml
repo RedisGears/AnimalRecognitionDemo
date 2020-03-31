@@ -2,11 +2,17 @@ version: 2.1
 
 jobs:
   test:
-    machine:
-      enabled: true
-      image: ubuntu-1604:201903-01
+    docker:
+      - image: 'debian:buster'
     steps:
+      - run:
+          name: Setup executor
+          command: |
+            apt-get -qq update
+            apt-get -q install -y git openssh-client curl ca-certificates make tar gzip
+            bash <(curl -fsSL https://get.docker.com)
       - checkout
+      - setup_remote_docker
       - run:
           name: Setup Docker Compose
           command: |
