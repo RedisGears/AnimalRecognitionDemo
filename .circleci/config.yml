@@ -4,8 +4,8 @@ jobs:
   test:
     machine:
       enabled: true
-      # image: ubuntu-1604:201903-01
-      image: circleci/classic:latest
+      image: ubuntu-1604:201903-01
+      # image: circleci/classic:latest
     steps:
       - checkout
       - run:
