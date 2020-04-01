@@ -1,0 +1,24 @@
+version: '3'
+services:
+  redis:
+    build:
+      context: ../redis
+    ports:
+      - "6379:6379"
+    environment:
+      - MAX_IMAGES
+  app:
+    build: ../app
+    depends_on:
+      - redis
+    command: ['init.py', '--url', 'redis://redis:6379']
+  camera:
+    build:
+      context: ../camera
+      dockerfile: Dockerfile.debian
+    depends_on:
+      - redis
+    environment:
+      - ANIMAL
+      - MAX_IMAGES
+    command: ['python3', '/usr/src/app/read_camera.py', '-u', 'redis://redis:6379', '--test']
