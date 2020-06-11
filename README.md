@@ -1,10 +1,12 @@
 [![license](https://img.shields.io/github/license/RedisGears/AnimalRecognitionDemo.svg)](https://github.com/RedisGears/AnimalRecognitionDemo)
 [![CircleCI](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master.svg?style=svg)](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master) 
+[![Forum](https://img.shields.io/badge/Forum-RedisGears-blue)](https://forum.redislabs.com/c/modules/redisgears)
+[![Gitter](https://badges.gitter.im/RedisLabs/RedisGears.svg)](https://gitter.im/RedisLabs/RedisGears?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # AnimalRecognitionDemo
 
 This demo combines several [Redis](https://redis.io) data structures and [Redis Modules](https://redis.io/topics/modules-intro)
-to process a stream of images and filter out the images that contain cats.
+to process a AnimalRecognitionDemostream of images and filter out the images that contain cats.
 
 It uses:
 
