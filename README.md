@@ -1,3 +1,4 @@
+[![license](https://img.shields.io/github/license/RedisGears/AnimalRecognitionDemo.svg)](https://github.com/RedisGears/AnimalRecognitionDemo)
 [![CircleCI](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master.svg?style=svg)](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master) 
 
 # AnimalRecognitionDemo
