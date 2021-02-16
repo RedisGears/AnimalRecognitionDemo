@@ -62,7 +62,7 @@ if __name__ == '__main__':
     print('Connected to Redis')
     sys.stdout.flush()
 
-    if args.test is None:
+    if args.test is False:
         print('Operating in camera mode')
         sys.stdout.flush()
         if args.infile is None:
@@ -80,7 +80,7 @@ if __name__ == '__main__':
             print('count: {} id: {}'.format(count, _id))
             sys.stdout.flush()
     else:
-        image_file = os.environ['ANIMAL'] + '.jpg'
+        image_file = args.infile
         print('Operating in test mode with image ' + image_file)
         sys.stdout.flush()
         img0 = cv2.imread(image_file)

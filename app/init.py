@@ -27,14 +27,14 @@ if __name__ == '__main__':
     print('Loading model - ', end='')
     with open('models/mobilenet_v2_1.4_224_frozen.pb', 'rb') as f:
         model = f.read()
-        res = conn.execute_command('AI.MODELSET', 'mobilenet:model', 'TF', 'CPU', 'INPUTS', 'input', 'OUTPUTS', 'MobilenetV2/Predictions/Reshape_1', model)
+        res = conn.execute_command('AI.MODELSET', 'mobilenet:model', 'TF', 'CPU', 'INPUTS', 'input', 'OUTPUTS', 'MobilenetV2/Predictions/Reshape_1', 'BLOB', model)
         print(res)
 
     # Load the gear
     print('Loading gear - ', end='')
     with open('gear.py', 'rb') as f:
         gear = f.read()
-        res = conn.execute_command('RG.PYEXECUTE', gear)
+        res = conn.execute_command('RG.PYEXECUTE', gear, 'REQUIREMENTS', 'imageio', 'numpy', 'opencv-python')
         print(res)
 
     # Lastly, set a key that indicates initialization has been performed
