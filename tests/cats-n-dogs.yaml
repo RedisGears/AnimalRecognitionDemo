@@ -18,6 +18,7 @@ services:
       dockerfile: Dockerfile.debian
     depends_on:
       - redis
+      - app
     environment:
       - ANIMAL
       - MAX_IMAGES
