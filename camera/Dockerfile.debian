@@ -5,21 +5,21 @@ ARG OSNICK=bionic
 FROM redisfab/redisedge:0.2.0-x64-${OSNICK}
 
 # This is due on the following error on ARMv8:
-# /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block 
+# /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block
 # Something is exausting TLS, causing libgomp to fail. Preloading it as a workaround helps.
 # ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq update
-
 RUN apt-get install -y wget python3 python3-pip ffmpeg libsm6 libxext6
+
 # wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py ;\
 # python3 /tmp/get-pip.py
 
 ADD requirements.txt ./
-RUN pip install -r requirements.txt
-
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 WORKDIR /usr/src/app
 
 ADD read_camera.py ./
