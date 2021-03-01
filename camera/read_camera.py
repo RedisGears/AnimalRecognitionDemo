@@ -80,7 +80,7 @@ if __name__ == '__main__':
             print('count: {} id: {}'.format(count, _id))
             sys.stdout.flush()
     else:
-        image_file = args.infile
+        image_file = os.environ['ANIMAL'] + '.jpg'
         print('Operating in test mode with image ' + image_file)
         sys.stdout.flush()
         img0 = cv2.imread(image_file)

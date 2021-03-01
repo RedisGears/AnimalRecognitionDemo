@@ -14,9 +14,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
 
 RUN set -ex ;\
-	apt-get install -y wget python3-distutils ;\
-	wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py ;\
-	python3 /tmp/get-pip.py
+	apt-get install -y python3 python3-pip ;\
+	pip3 install --upgrade pip
 
 WORKDIR /app
 ADD . /app
