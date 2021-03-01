@@ -17,11 +17,11 @@ endif
 
 camera:
 ifneq ($(VENV),0)
-	python2 -m virtualenv venv
+	python3 -m virtualenv venv
 	. ./venv/bin/activate; pip install -r camera/requirements.txt
 	. ./venv/bin/activate; python camera/read_camera.py $(CAMERA_ARG)
 else
-	python2 camera/read_camera.py $(CAMERA_ARG)
+	python3 camera/read_camera.py $(CAMERA_ARG)
 endif
 
 setup:

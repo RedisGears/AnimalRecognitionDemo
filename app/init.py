@@ -37,6 +37,18 @@ if __name__ == '__main__':
         res = conn.execute_command('RG.PYEXECUTE', gear, 'REQUIREMENTS', 'imageio', 'numpy', 'opencv-python')
         print(res)
 
+    while True:
+        res = conn.execute_command('RG.PYDUMPREQS')
+        finished = True
+        for i in range(len(res)):
+            dep = res[i]
+            downloaded_dep = dep[5]
+            finished = finished and (downloaded_dep == b'yes')
+        if finished:
+            print('gear loaded')
+            break
+
+
     # Lastly, set a key that indicates initialization has been performed
     print('Flag initialization as done - ', end='')
     print(conn.set(initialized_key, 'miauw'))

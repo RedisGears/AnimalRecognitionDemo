@@ -15,14 +15,14 @@ if len(sys.argv) > 1:
 	fields = sys.argv[1].split(':')
 else:
 	fields = ['']
-fields = map(lambda x: to_int(x), fields)
+n = len(fields)
+# fields = {x: to_int(x) for x in fields}
 row = ""
 i = 0
-n = len(fields)
 for line in sys.stdin:
 	s = line.strip()
 	m = len(s)
-	c = fields[i]
+	c = to_int(fields[i])
 	i = i + 1
 	if c != -1:
 		if m > c:
