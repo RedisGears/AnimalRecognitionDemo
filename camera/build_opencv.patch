@@ -1,0 +1,69 @@
+diff --git a/build_opencv.sh b/build_opencv.sh
+index 486bca9..e3c22c1 100755
+--- a/build_opencv.sh
++++ b/build_opencv.sh
+@@ -2,6 +2,7 @@
+ # 2019 Michael de Gans
+ 
+ set -e
++set -x
+ 
+ # change default constants here:
+ readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
+@@ -24,7 +25,7 @@ cleanup () {
+         if ! [[ "$1" -eq "--test-warning" ]] ; then
+             echo "(Doing so may make running tests on the build later impossible)"
+         fi
+-        read -p "Y/N " yn
++        yn="Y"
+         case ${yn} in
+             [Yy]* ) rm -rf /tmp/build_opencv ; break;;
+             [Nn]* ) exit ;;
+@@ -53,9 +54,9 @@ install_dependencies () {
+     # open-cv has a lot of dependencies, but most can be found in the default
+     # package repository or should already be installed (eg. CUDA).
+     echo "Installing build dependencies."
+-    sudo apt-get update
+-    sudo apt-get dist-upgrade -y --autoremove
+-    sudo apt-get install -y \
++    apt-get update
++    apt-get dist-upgrade -y --autoremove
++    apt-get install -y \
+         build-essential \
+         cmake \
+         git \
+@@ -104,7 +105,7 @@ install_dependencies () {
+ configure () {
+     local CMAKEFLAGS="
+         -D BUILD_EXAMPLES=OFF
+-        -D BUILD_opencv_python2=ON
++        -D BUILD_opencv_python2=OFF
+         -D BUILD_opencv_python3=ON
+         -D CMAKE_BUILD_TYPE=RELEASE
+         -D CMAKE_INSTALL_PREFIX=${PREFIX}
+@@ -114,13 +115,13 @@ configure () {
+         -D CUDNN_VERSION='8.0'
+         -D EIGEN_INCLUDE_PATH=/usr/include/eigen3 
+         -D ENABLE_NEON=ON
+-        -D OPENCV_DNN_CUDA=ON
++        -D OPENCV_DNN_CUDA=OFF
+         -D OPENCV_ENABLE_NONFREE=ON
+         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
+         -D OPENCV_GENERATE_PKGCONFIG=ON
+         -D WITH_CUBLAS=ON
+-        -D WITH_CUDA=ON
+-        -D WITH_CUDNN=ON
++        -D WITH_CUDA=OFF
++        -D WITH_CUDNN=OFF
+         -D WITH_GSTREAMER=ON
+         -D WITH_LIBV4L=ON
+         -D WITH_OPENGL=ON"
+@@ -175,7 +176,7 @@ main () {
+     if [[ -w ${PREFIX} ]] ; then
+         make install 2>&1 | tee -a install.log
+     else
+-        sudo make install 2>&1 | tee -a install.log
++        make install 2>&1 | tee -a install.log
+     fi
+ 
+     cleanup --test-warning

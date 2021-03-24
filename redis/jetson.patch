@@ -1,0 +1,46 @@
+diff --git a/get_deps.sh b/get_deps.sh
+index 89ea863..263dd2d 100755
+--- a/get_deps.sh
++++ b/get_deps.sh
+@@ -75,7 +75,7 @@ if [[ $WITH_DLPACK != 0 ]]; then
+ 
+ 	if [[ ! -d $DLPACK ]]; then
+ 		echo "Cloning dlpack ..."
+-		git clone --depth 1 https://github.com/dmlc/dlpack.git $DLPACK
++		git clone --depth 1 --branch v0.3 https://github.com/dmlc/dlpack.git $DLPACK
+ 		echo "Done."
+ 	else
+ 		echo "dlpack is in place."
+@@ -86,7 +86,7 @@ fi
+ 
+ ################################################################################# LIBTENSORFLOW
+ 
+-TF_VERSION="1.15.0"
++TF_VERSION="2.3.2"
+ 
+ if [[ $WITH_TF != 0 ]]; then
+ 	[[ $FORCE == 1 ]] && rm -rf $LIBTENSORFLOW
+@@ -112,9 +112,8 @@ if [[ $WITH_TF != 0 ]]; then
+ 					LIBTF_URL_BASE=https://storage.googleapis.com/tensorflow/libtensorflow
+ 				fi
+ 			elif [[ $ARCH == arm64v8 ]]; then
+-				TF_VERSION=1.15.0
+ 				TF_ARCH=arm64
+-				LIBTF_URL_BASE=https://s3.amazonaws.com/redismodules/tensorflow
++				LIBTF_URL_BASE=https://s3.amazonaws.com/redismodules/redisai/redisai
+ 			elif [[ $ARCH == arm32v7 ]]; then
+ 				TF_VERSION=1.15.0
+ 				TF_ARCH=arm
+diff --git a/opt/system-setup.py b/opt/system-setup.py
+index 873d422..91deb61 100755
+--- a/opt/system-setup.py
++++ b/opt/system-setup.py
+@@ -33,7 +33,7 @@ class RedisAISetup(paella.Setup):
+         self.install("build-essential cmake")
+         self.install("python3-regex")
+         self.install("python3-psutil python3-networkx python3-numpy") # python3-skimage
+-        self.install_git_lfs_on_linux()
++        # self.install_git_lfs_on_linux()
+ 
+     def redhat_compat(self):
+         self.install("redhat-lsb-core")
