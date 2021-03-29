@@ -1,0 +1,11 @@
+--- init.py	2021-03-29 17:14:57.525688056 -0500
++++ init.py.updated	2021-03-29 17:14:27.563462225 -0500
+@@ -27,7 +27,7 @@
+     print('Loading model - ', end='')
+     with open('models/mobilenet_v2_1.4_224_frozen.pb', 'rb') as f:
+         model = f.read()
+-        res = conn.execute_command('AI.MODELSET', 'mobilenet:model', 'TF', 'CPU', 'INPUTS', 'input', 'OUTPUTS', 'MobilenetV2/Predictions/Reshape_1', model)
++        res = conn.execute_command('AI.MODELSET', 'mobilenet:model', 'TF', 'CPU', 'INPUTS', 'input', 'OUTPUTS', 'MobilenetV2/Predictions/Reshape_1', 'BLOB', model)
+         print(res)
+ 
+     # Load the gear

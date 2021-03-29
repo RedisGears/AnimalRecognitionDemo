@@ -11,18 +11,15 @@ FROM redisfab/redisedgevision-${OSNICK}:0.2.0
 ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq update
-
-RUN set -ex ;\
-        apt-get install -y wget python3-distutils patch ;\
-        wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py ;\
-        python3 /tmp/get-pip.py
+RUN apt-get -qq update && apt-get install -qqy wget python3-distutils patch
+RUN wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py && python3 /tmp/get-pip.py
 
 WORKDIR /app
 ADD . /app
 
 # patch init script for aarch64
-RUN patch init.py jetson.patch
+RUN patch init.py init.patch
+RUN patch gear.py gear.patch
 
 RUN pip3 install -r requirements.txt
 

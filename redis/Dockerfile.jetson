@@ -52,8 +52,8 @@ ARG BUILD_ARGS="GPU=1 SHOW=1 WITH_TFLITE=0 WITH_PT=0 WITH_ORT=0 WITH_UNIT_TESTS=
 
 #RUN apt-get install -y libegl1-mesa-dev freeglut3-dev
 
-RUN bash -c "set -e ;\
-    . ./opt/readies/bin/sourced ./profile.d ;\
+RUN bash -c "set -e &&\
+    . ./opt/readies/bin/sourced ./profile.d &&\
     make -C opt build $BUILD_ARGS"
 
 # build RedisGears
@@ -71,8 +71,7 @@ ARG GEARS_VER
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
-RUN if [ ! -z $(command -v apt-get) ]; then apt-get -qq update; apt-get -q install -y libgomp1 build-essential libatlas-base-dev cmake ; fi
-RUN if [ ! -z $(command -v yum) ]; then yum install -y libgomp; fi
+RUN apt-get -qq update && apt-get -q install -y libgomp1 build-essential libatlas-base-dev cmake
 
 ENV REDIS_MODULES /usr/lib/redis/modules
 RUN mkdir -p $REDIS_MODULES/
