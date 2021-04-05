@@ -3,7 +3,7 @@
 ARG OSNICK=bionic
 
 #----------------------------------------------------------------------------------------------
-FROM redisfab/redisedge:0.2.0-x64-${OSNICK}
+FROM redisfab/redisedge:0.4.0-x64-${OSNICK}
 
 # This is due on the following error on ARMv8:
 # /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block 
