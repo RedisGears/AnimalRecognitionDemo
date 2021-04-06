@@ -15,11 +15,11 @@ RUN apt-get -qq update
 
 RUN set -ex ;\
 	apt-get install -y python3 python3-pip ;\
-	pip3 install --upgrade pip
+	python3 -m pip install --upgrade pip
 
 WORKDIR /app
 ADD . /app
 
-RUN pip3 install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 
 ENTRYPOINT [ "python3" ]

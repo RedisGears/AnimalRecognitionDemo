@@ -6,6 +6,7 @@ if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url', help='Redis URL', type=str, default='redis://127.0.0.1:6379')
+    parser.add_argument('--with-requirements', action="store_true", help="Present requirements to Gears")
     args = parser.parse_args()
 
     # Set up some vars
@@ -34,7 +35,10 @@ if __name__ == '__main__':
     print('Loading gear - ', end='')
     with open('gear.py', 'rb') as f:
         gear = f.read()
-        res = conn.execute_command('RG.PYEXECUTE', gear, 'REQUIREMENTS', 'imageio', 'numpy', 'opencv-python')
+        if args.with_requirements:
+            res = conn.execute_command('RG.PYEXECUTE', gear, 'REQUIREMENTS', 'imageio', 'numpy', 'opencv-python')
+        else:
+            res = conn.execute_command('RG.PYEXECUTE', gear)
         print(res)
 
     while True:
