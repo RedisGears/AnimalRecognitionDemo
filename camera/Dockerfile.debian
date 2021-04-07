@@ -1,25 +1,25 @@
 # OSNICK=stretch|bionic|buster
-ARG OSNICK=buster
+ARG OSNICK=bionic
 
 #----------------------------------------------------------------------------------------------
-FROM redisfab/redisedgevision-${OSNICK}:0.2.0
+FROM redisfab/redisedge:0.4.0-x64-${OSNICK}
 
 # This is due on the following error on ARMv8:
-# /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block 
+# /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block
 # Something is exausting TLS, causing libgomp to fail. Preloading it as a workaround helps.
 # ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq update
+RUN apt-get install -y wget python3 python3-pip ffmpeg libsm6 libxext6
 
-RUN set -x; \
-	apt-get install -y wget python3-distutils ;\
-    wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py ;\
-	python3 /tmp/get-pip.py
+# wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py ;\
+# python3 /tmp/get-pip.py
 
-RUN pip install redis==3.2.1
-
+ADD requirements.txt ./
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install -r requirements.txt
 WORKDIR /usr/src/app
 
 ADD read_camera.py ./

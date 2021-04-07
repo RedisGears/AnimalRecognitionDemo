@@ -62,7 +62,7 @@ if __name__ == '__main__':
     print('Connected to Redis')
     sys.stdout.flush()
 
-    if args.test is None:
+    if args.test is False:
         print('Operating in camera mode')
         sys.stdout.flush()
         if args.infile is None:

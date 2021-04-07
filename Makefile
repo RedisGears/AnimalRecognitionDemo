@@ -1,4 +1,17 @@
 
+define HELP
+make start    # Start containers
+make stop     # Stop containers
+make clean    # Remove demo containers and images
+make test     # Run test
+  VERBOSE=1     # Show more detailed information
+make camera   # Start camera process
+make setup    # Install prerequisites
+
+endef
+
+#----------------------------------------------------------------------------------------------
+
 start:
 	@docker-compose up -d
 
@@ -8,8 +21,14 @@ stop:
 build:
 	@docker-compose build
 
+clean:
+	@./tests/cats-n-dogs.sh clean
+
 test:
 	@./tests/cats-n-dogs.sh
+
+show-logs:
+	@./tests/cats-n-dogs.sh logs
 
 ifdef REDIS
 CAMERA_ARG=-u $(REDIS)
@@ -17,11 +36,11 @@ endif
 
 camera:
 ifneq ($(VENV),0)
-	python2 -m virtualenv venv
+	python3 -m virtualenv venv
 	. ./venv/bin/activate; pip install -r camera/requirements.txt
 	. ./venv/bin/activate; python camera/read_camera.py $(CAMERA_ARG)
 else
-	python2 camera/read_camera.py $(CAMERA_ARG)
+	python3 camera/read_camera.py $(CAMERA_ARG)
 endif
 
 setup:
@@ -31,4 +50,19 @@ setup:
     cd /tmp; tar xf git-lfs.tar.gz; $(SUDO) ./install.sh
 	@git lfs pull
 
-.PHONY: start stop build test camera setup
+.PHONY: start stop build clean test camera setup help
+
+#----------------------------------------------------------------------------------------------
+
+ifneq ($(HELP),) 
+ifneq ($(filter help,$(MAKECMDGOALS)),)
+HELPFILE:=$(shell mktemp /tmp/make.help.XXXX)
+endif
+endif
+
+help:
+	$(file >$(HELPFILE),$(HELP))
+	@echo
+	@cat $(HELPFILE)
+	@echo
+	@-rm -f $(HELPFILE)
