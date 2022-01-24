@@ -1,8 +1,8 @@
 import java.io.Serializable;
 import java.util.*;
 import gears.GearsBuilder;
-import gears.readers.KeysReader;
-import gears.records.KeysReaderRecord;
+import gears.readers.*;
+import gears.records.*;
 
 public class App {
 
@@ -90,9 +90,27 @@ public class App {
     //     register('camera:0')
 
     public static void main(String[] args) {
-        KeysReader reader = new KeysReader();
-        GearsBuilder<KeysReaderRecord> gb = GearsBuilder.CreateGearsBuilder(reader);
+        StreamReader streamer = new StreamReader();
+        GearsBuilder<StreamReaderRecord> gb = GearsBuilder.CreateGearsBuilder(streamer);
 
-        gb.run();
+        gb.foreach(r -> {/* not sure what to do here */
+            // passAll
+        }).filter(r -> {
+            framesToDrop++;
+            return framesToDrop % 10 == 0;
+        }).map(r -> {
+            // addToGraphRunner
+        }).filter(r -> {
+            for (int i = 0; i < r[0].length; i++) {
+                if (r[0][i].equals("cat")) {
+                    return true;
+                }
+            }
+            return false;
+        }).foreach(r -> {
+            // add to stream
+        }).register("camera:0");
+
+        gb.run(); // needed?
     }
 }
