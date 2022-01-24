@@ -1,23 +1,107 @@
 version: 2.1
 
+commands:
+  setup-executor:
+    steps:
+      - run:
+          name: Setup executor
+          command: |
+            apt-get -qq update
+            apt-get -q install -y git openssh-client curl ca-certificates make tar gzip
+            bash <(curl -fsSL https://raw.githubusercontent.com/docker/docker-install/master/install.sh)
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
+
+  checkout-all:
+    steps:
+      - checkout
+      - run:
+          name: Checkout submodules
+          command: git submodule update --init --recursive
+
+  setup-automation:
+    steps:
+      - run:
+          name: Setup automation
+          command: |
+            git submodule update --init deps/readies
+            ./deps/readies/bin/getpy3
+
+  install-prerequisites:
+    parameters:
+      redis_version:
+        type: string
+        default: "6"
+      getredis_params:
+        type: string
+        default: ""
+    steps:
+      - setup-automation
+      - run:
+          name: System setup
+          command: ./sbin/system-setup.py
+      - run:
+          name: Install Redis
+          shell: /bin/bash -l -eo pipefail
+          command: |
+            python3 ./deps/readies/bin/getredis -v '<<parameters.redis_version>>' --force <<parameters.getredis_params>>
+            redis-server --version
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
 jobs:
   test:
     machine:
       enabled: true
       image: ubuntu-1604:201903-01
     steps:
-      - checkout
+      - checkout-all
+      - setup-prerequisits
       - run:
           name: System Setup
           command: |
             sudo apt-get -qq update -y
-            sudo apt-get -q install -y curl ca-certificates wget make
-            (cd ..; git clone https://github.com/antirez/redis.git; cd redis; git checkout 5.0.8; make -j$(nproc); sudo make install)
+            sudo apt-get -q install -y make
             SUDO=sudo make setup
       - run:
           name: Test
           command: |
             make test VERBOSE=1
+
+  test-rlec:
+    machine:
+      enabled: true
+      image: ubuntu-2004:202010-01
+      resource_class: large
+    working_directory: ~/AnimalRecognitionDemo
+    steps:
+      - checkout-all
+      - run:
+          name: Install prerequisites
+          command: |
+            ./deps/readies/bin/getpy3
+            ./sbin/system-setup.py
+            ./deps/readies/bin/getredis
+            ./deps/readies/bin/getdocker --just-enable-exp
+            docker version
+            python3 -m pip list
+      - run:
+          name: Install Arlecchino
+          command: |
+            cd
+            FORCE=1 ./AnimalRecognitionDemo/deps/readies/bin/getrlec
+      - run:
+          name: Start RLEC
+          shell: /bin/bash -l -eo pipefail
+          command: |
+            cd
+            mkdir -p rlec && chmod 777 rlec
+            ./AnimalRecognitionDemo/deps/readies/bin/xtx -dMODULE=$(cd AnimalRecognitionDemo/bin/artifacts && ls *.zip) \
+                AnimalRecognitionDemo/tests/flow/rlec/redis-modules.yaml > rlec/redis-modules.yaml
+            rlec start --verbose --version 6.2.8 --build 53 --os bionic
+
+#----------------------------------------------------------------------------------------------------------------------------------
 
 workflows:
   version: 2
