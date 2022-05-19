@@ -1,3 +1,2 @@
-opencv-python>4.0,<4.1
-redis==3.2.1
-numpy>=1.17.1
+opencv-python-headless<4.5
+redis
