@@ -1,5 +1,5 @@
 [![license](https://img.shields.io/github/license/RedisGears/AnimalRecognitionDemo.svg)](https://github.com/RedisGears/AnimalRecognitionDemo)
-[![CircleCI](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master.svg?style=svg)](https://circleci.com/gh/RedisGears/AnimalRecognitionDemo/tree/master) 
+[![Animal Recognition](https://github.com/RedisGears/AnimalRecognitionDemo/actions/workflows/ci-config.yml/badge.svg)](https://github.com/RedisGears/AnimalRecognitionDemo/actions/workflows/ci-config.yml)
 [![Forum](https://img.shields.io/badge/Forum-RedisGears-blue)](https://forum.redislabs.com/c/modules/redisgears)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/6yaVTtp)
 
@@ -20,7 +20,7 @@ It forwards the images that contain cats to a stream: `cats`
 ![Architecture](/architecture.png)
 
 ## Requirements
-Docker and Python 2
+Docker and Python 3
 
 ## Running the Demo
 To run the demo:
@@ -29,6 +29,20 @@ $ git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
 $ cd AnimalRecognitionDemo
 # If you don't have it already, install https://git-lfs.github.com/ (On OSX: brew install git-lfs)
 $ git lfs install && git lfs fetch && git lfs checkout
+```
+For running the demo with `make`, run:
+```
+$ make start
+$ make camera
+```
+And then to stop the containers:
+```
+$ make stop
+```
+Run `make help` for a few more options.
+
+For running the demo manually, run:
+```
 $ docker-compose up
 ```
 If something went wrong, e.g. you skipped installing git-lfs, you need to force docker-compose to rebuild the containers
@@ -39,6 +53,10 @@ Open a second terminal for the video capturing:
 ```
 $ pip install -r camera/requirements.txt
 $ python camera/read_camera.py
+```
+Or run the camera process in test mode (without streaming from your camera):
+```
+$ ANIMAL=[cat|dog] python camera/read_camera.py --test
 ```
 
 ## UI
