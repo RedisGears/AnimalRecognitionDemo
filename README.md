@@ -24,39 +24,39 @@ Docker and Python 3
 
 ## Running the Demo
 To run the demo:
-```
-$ git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
-$ cd AnimalRecognitionDemo
+```bash
+git clone https://github.com/RedisGears/AnimalRecognitionDemo.git
+cd AnimalRecognitionDemo
 # If you don't have it already, install https://git-lfs.github.com/ (On OSX: brew install git-lfs)
-$ git lfs install && git lfs fetch && git lfs checkout
+git lfs install && git lfs fetch && git lfs checkout
 ```
 For running the demo with `make`, run:
-```
-$ make start
-$ make camera
+```bash
+make start
+make camera
 ```
 And then to stop the containers:
-```
-$ make stop
+```bash
+make stop
 ```
 Run `make help` for a few more options.
 
 For running the demo manually, run:
-```
-$ docker-compose up
+```bash
+docker-compose up
 ```
 If something went wrong, e.g. you skipped installing git-lfs, you need to force docker-compose to rebuild the containers
-```
-$ docker-compose up --force-recreate --build
+```bash
+docker-compose up --force-recreate --build
 ```
 Open a second terminal for the video capturing:
-```
-$ pip install -r camera/requirements.txt
-$ python camera/read_camera.py
+```bash
+pip install -r camera/requirements.txt
+python camera/read_camera.py
 ```
 Or run the camera process in test mode (without streaming from your camera):
-```
-$ ANIMAL=[cat|dog] python camera/read_camera.py --test
+```bash
+ANIMAL=[cat|dog] python camera/read_camera.py --test
 ```
 
 ## UI
