@@ -1,2 +1,1 @@
-# opencv-python
-redis==3.2.1
+redis
