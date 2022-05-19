@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
 
 RUN set -ex ;\
-	apt-get install -y wget python3 python3-pip ;\
+	apt-get -qq install -y python3 python3-pip > /dev/null;\
 	python3 -m pip install --upgrade pip
 
 WORKDIR /app

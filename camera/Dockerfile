@@ -9,7 +9,7 @@ FROM redislabs/redismod:edge
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq update && apt-get install -y python3 python3-pip
+RUN apt-get -qq update && apt-get -qq install -y python3 python3-pip > /dev/null
 
 ADD requirements.txt ./
 RUN python3 -m pip install --upgrade pip
