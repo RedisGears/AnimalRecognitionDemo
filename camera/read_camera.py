@@ -43,6 +43,15 @@ class Webcam:
     def __len__(self):
         return 0
 
+
+def waitForRDBLoad(conn):
+    while True:
+        try:
+            if not conn.execute_command('info', 'Persistence')['loading']:
+                break
+        except redis.exceptions.BusyLoadingError:
+            pass
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', help='Input file (leave empty to use webcam)', nargs='?', type=str, default=None)
@@ -57,6 +66,7 @@ if __name__ == '__main__':
     # Set up Redis connection
     url = urllib.parse.urlparse(args.url)
     conn = redis.Redis(host=url.hostname, port=url.port)
+    waitForRDBLoad(conn)
     if not conn.ping():
         raise Exception('Redis unavailable')
     print('Connected to Redis')
