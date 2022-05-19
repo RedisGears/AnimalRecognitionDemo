@@ -35,7 +35,9 @@ For running the demo with `make`, run:
 make start
 make camera
 ```
-And then to stop the containers:
+Then open the [UI](README.md#ui) to watch the result streams.
+
+To end the demo, then to stop the containers:
 ```bash
 make stop
 ```
