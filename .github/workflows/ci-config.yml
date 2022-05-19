@@ -20,6 +20,7 @@ jobs:
           cd redis;
           git checkout 6.2.7;
           make -j$(nproc) redis-cli;
+          pwd;
           alias redis-cli="$(pwd)/src/redis-cli";
           redis-cli SET installation succeeded 
     - name: Test 
