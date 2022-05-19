@@ -1,2 +1,5 @@
 frontend/node_modules/*
 frontend/package-lock.json
+
+venv
+.vscode
