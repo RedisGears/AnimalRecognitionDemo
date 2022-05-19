@@ -13,5 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: install redis-cli
+      run: |
+          git clone https://github.com/redis/redis.git;
+          cd redis;
+          git checkout 6.2.7;
+          make -j$(nproc) redis-cli;
+          alias redis-cli='`pwd`/src/redis-cli';
     - name: Test 
       run: make test VERBOSE=1
