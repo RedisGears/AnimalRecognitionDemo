@@ -19,7 +19,6 @@ jobs:
           git clone https://github.com/redis/redis.git;
           cd redis;
           git checkout 6.2.7;
-          make -j$(nproc) redis-cli;
-          sudo make install
+          sudo make -j$(nproc) install
     - name: Test 
       run: make test VERBOSE=1
