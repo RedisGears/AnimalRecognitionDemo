@@ -1,7 +1,7 @@
 [![license](https://img.shields.io/github/license/RedisGears/AnimalRecognitionDemo.svg)](https://github.com/RedisGears/AnimalRecognitionDemo)
 [![Animal Recognition](https://github.com/RedisGears/AnimalRecognitionDemo/actions/workflows/ci-config.yml/badge.svg)](https://github.com/RedisGears/AnimalRecognitionDemo/actions/workflows/ci-config.yml)
 [![Forum](https://img.shields.io/badge/Forum-RedisGears-blue)](https://forum.redislabs.com/c/modules/redisgears)
-[![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/6yaVTtp)
+[![Discord](https://img.shields.io/discord/697882427875393627)](https://discord.gg/6yaVTtp)
 
 # AnimalRecognitionDemo
 
