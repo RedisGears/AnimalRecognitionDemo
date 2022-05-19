@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import os
 import sys
 
 def to_int(x):
@@ -15,7 +14,7 @@ if len(sys.argv) > 1:
 	fields = sys.argv[1].split(':')
 else:
 	fields = ['']
-fields = map(lambda x: to_int(x), fields)
+fields = list(map(lambda x: to_int(x), fields))
 row = ""
 i = 0
 n = len(fields)
