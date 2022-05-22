@@ -1,8 +1,6 @@
-# OSNICK=stretch|bionic|buster
-ARG OSNICK=buster
 
 #----------------------------------------------------------------------------------------------
-FROM redisfab/redisedgevision-${OSNICK}:0.2.0
+FROM redislabs/redismod:edge
 
 # This is due on the following error on ARMv8:
 # /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block 
@@ -11,18 +9,15 @@ FROM redisfab/redisedgevision-${OSNICK}:0.2.0
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq update
+RUN apt-get -qq update && apt-get -qq install -y python3 python3-pip > /dev/null
 
-RUN set -x; \
-	apt-get install -y wget python3-distutils ;\
-    wget -q https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py ;\
-	python3 /tmp/get-pip.py
-
-RUN pip install redis==3.2.1
+ADD requirements.txt ./
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install -r requirements.txt
 
 WORKDIR /usr/src/app
 
 ADD read_camera.py ./
 ADD *.jpg ./
 
-CMD [ "python3", "./read_camera.py" ]
+ENTRYPOINT [ "python3", "./read_camera.py" ]

@@ -5,9 +5,9 @@
   "main": "server.js",
   "license": "Apache-2.0",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "4.17.1",
-    "ws": "^6.1.0",
-    "redis": "2.8.0"
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "ws": "^8.6.0",
+    "redis": "3.1.0"
   }
 }

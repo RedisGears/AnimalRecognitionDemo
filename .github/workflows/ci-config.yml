@@ -1,0 +1,28 @@
+name: Animal Recognition Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  run_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
+    - name: Checkout LFS objects
+      run: git lfs checkout
+    - name: install redis-cli
+      run: |
+          cd ..;
+          git clone https://github.com/redis/redis.git;
+          cd redis;
+          git checkout 6.2.7;
+          sudo make -j$(nproc) install
+    - name: Test 
+      run: make test VERBOSE=1

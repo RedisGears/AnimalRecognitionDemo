@@ -32,14 +32,20 @@ start() {
 }
 
 stop() {
+	RMI_ARG=""
+	[[ $ALL == 1 ]] && RMI_ARG="--rmi all"
 	if [[ $VERBOSE == 1 ]]; then
 		$HERE/show-stream-stat.sh
 		$HERE/show-log.sh
-		docker-compose $SPEC down -v --remove-orphans
+		docker-compose $SPEC down $RMI_ARG -v --remove-orphans
 	else
 		#  --rmi local
-		docker-compose $SPEC down -v --remove-orphans >> $DOCKER_LOG 2>&1
+		docker-compose $SPEC down $RMI_ARG -v --remove-orphans >> $DOCKER_LOG 2>&1
 	fi
+}
+
+clean() {
+	ALL=1 stop
 }
 
 count() {
@@ -84,23 +90,23 @@ cats_demo() {
 }
 
 help() {
-	echo "[ANIMAL=cat|dog] [VERBOSE=0|1] [REBUILD=0|1] $0 [start|stop|build|count|logs|help]"
+	echo "[ANIMAL=cat|dog] [VERBOSE=0|1] [REBUILD=0|1] $0 [start|stop|build|clean|count|logs|help]"
 }
 
 cmd=$1
 shift
 if [[ $cmd == help ]]; then
 	help
-	exit 0
 elif [[ $cmd == start ]]; then
 	start
 elif [[ $cmd == stop ]]; then
 	stop
 elif [[ $cmd == build ]]; then
 	build
+elif [[ $cmd == clean ]]; then
+	clean
 elif [[ $cmd == count ]]; then
 	echo $(count)
-	exit 0
 elif [[ $cmd == logs ]]; then
 	show_logs $*
 elif [[ $cmd == "" ]]; then
@@ -120,6 +126,5 @@ elif [[ $cmd == "" ]]; then
 	echo "dogs: OK"
 else
 	help
-	exit 0
 fi
 exit 0

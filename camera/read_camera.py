@@ -43,6 +43,15 @@ class Webcam:
     def __len__(self):
         return 0
 
+
+def waitForRDBLoad(conn):
+    while True:
+        try:
+            if not conn.execute_command('info', 'Persistence')['loading']:
+                break
+        except redis.exceptions.BusyLoadingError:
+            pass
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', help='Input file (leave empty to use webcam)', nargs='?', type=str, default=None)
@@ -51,18 +60,19 @@ if __name__ == '__main__':
     parser.add_argument('--fmt', help='Frame storage format', type=str, default='.jpg')
     parser.add_argument('--fps', help='Frames per second (webcam)', type=float, default=15.0)
     parser.add_argument('--maxlen', help='Maximum length of output stream', type=int, default=1000)
-    parser.add_argument('--test', help='transmit image instead of reading webcam', action="store_true")
+    parser.add_argument('--test', help='transmit image instead of reading webcam', action="store_true", default=False)
     args = parser.parse_args()
 
     # Set up Redis connection
     url = urllib.parse.urlparse(args.url)
     conn = redis.Redis(host=url.hostname, port=url.port)
+    waitForRDBLoad(conn)
     if not conn.ping():
         raise Exception('Redis unavailable')
     print('Connected to Redis')
     sys.stdout.flush()
 
-    if args.test is None:
+    if not args.test:
         print('Operating in camera mode')
         sys.stdout.flush()
         if args.infile is None:
@@ -80,8 +90,10 @@ if __name__ == '__main__':
             print('count: {} id: {}'.format(count, _id))
             sys.stdout.flush()
     else:
+        dir = os.path.dirname(os.path.realpath(__file__))
         image_file = os.environ['ANIMAL'] + '.jpg'
         print('Operating in test mode with image ' + image_file)
+        image_file = os.path.join(dir, image_file)
         sys.stdout.flush()
         img0 = cv2.imread(image_file)
         img = cv2.resize(img0, (IMAGE_WIDTH, IMAGE_HEIGHT))
