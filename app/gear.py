@@ -64,7 +64,7 @@ def addToStream(x):
     try:
         redisgears.executeCommand('xadd', 'cats', 'MAXLEN', '~', str(MAX_IMAGES), '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x[1]).decode('utf8'))
         xlog('addToStream: ', x[0])
-        log('ITS A CAT')
+        log('CAT DETECTED')
     except:
         xlog('addToStream: error:', sys.exc_info()[0])
 
