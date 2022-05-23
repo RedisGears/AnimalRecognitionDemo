@@ -16,8 +16,11 @@ It uses:
 
 It forwards the images that contain cats to a stream: `cats`
 
+It uses [RedisAI Integration](https://github.com/RedisGears/RedisGears/blob/master/docs/redisai.md) in RedisGears with asynchronous function so the server is not blocked while RedisGears is triggering an inference session in RedisAI.
+
 ## Architecture
-![Architecture](/architecture.png)
+![Architecture](/architecture.png#gh-light-mode-only)
+![Architecture](/architecture_dm.png#gh-dark-mode-only)
 
 ## Requirements
 Docker and Python 3

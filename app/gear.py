@@ -26,7 +26,7 @@ def toOneList(l):
             res.append(val)
     return res
 
-def addToGraphRunner(x):
+async def addToGraphRunner(x):
     x = x['value']
     try:
         xlog('addToGraphRunner:', 'count=', x['count'])
@@ -48,7 +48,9 @@ def addToGraphRunner(x):
         redisAI.modelRunnerAddOutput(graphRunner, 'MobilenetV2/Predictions/Reshape_1')
 
         # run the graph and translate the result to python list
-        res = redisAI.tensorToFlatList(redisAI.modelRunnerRun(graphRunner)[0])
+        # running the model ASYNCHRONOUSLY so the server is not blocked 
+        res = await redisAI.modelRunnerRunAsync(graphRunner)
+        res = redisAI.tensorToFlatList(res[0])
 
         # extract the animal name
         res1 = sorted(res, reverse=True)
