@@ -1,0 +1,30 @@
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
+
+# This is due on the following error on ARMv8:
+# /usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block
+# Something is exausting TLS, causing libgomp to fail. Preloading it as a workaround helps.
+# ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu:$LD_LIBRARY_PATH
+ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
+
+RUN apt-get -qq update && apt-get upgrade -y
+RUN apt-get install -qqy curl patch
+RUN curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && python3 /tmp/get-pip.py
+
+RUN pip install redis==3.2.1
+
+WORKDIR /usr/src/app
+
+ADD read_camera_jetson.py ./
+ADD *.jpg ./
+ADD build_opencv.patch ./
+
+# build opencv from the source for Jetson Nano aarch64
+RUN wget https://raw.githubusercontent.com/mdegans/nano_build_opencv/301e95dd6c361ed29dc523a46483f05bafd7f70b/build_opencv.sh
+RUN patch build_opencv.sh build_opencv.patch
+RUN chmod +x build_opencv.sh
+RUN ./build_opencv.sh
+
+CMD [ "python3", "./read_camera_jetson.py", "-u", "redis://redis:6379"]

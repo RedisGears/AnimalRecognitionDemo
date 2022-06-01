@@ -1,0 +1,100 @@
+ARG REDIS_VER=6.0.9
+ARG GEARS_VER=1.0.6
+ARG AI_VER=1.0.2
+
+ARG OS=L4T
+
+ARG OSNICK=bionic
+
+# ARCH=x64|arm64v8|arm32v7
+ARG ARCH=arm64v8
+
+ARG PACK=0
+ARG TEST=0
+
+#----------------------------------------------------------------------------------------------
+FROM redisfab/redis:${REDIS_VER}-${ARCH}-${OSNICK} AS redis
+FROM redisfab/jetpack:4.4.1-${ARCH}-l4t AS builder
+
+ARG OS
+ARG ARCH
+ARG REDIS_VER
+ARG GEARS_VER
+ARG AI_VER
+
+RUN echo "Building for $${OS} for ${ARCH} [with Redis ${REDIS_VER}]"
+
+WORKDIR /build
+
+RUN apt-get update
+RUN apt-get install -y locales python3-dev patch
+ENV LANG en_US.UTF-8
+
+COPY --from=redis /usr/local/ /usr/local/
+
+# build RedisAI
+RUN  git clone --recursive --depth 1 --branch v${AI_VER} https://github.com/RedisAI/RedisAI.git
+
+WORKDIR /build/RedisAI
+
+# patch system setup script for aarch64
+RUN git lfs install
+ADD jetson.patch ./
+RUN git apply jetson.patch
+
+RUN PIP=1 FORCE=1 ./opt/readies/bin/getpy3
+RUN ./opt/system-setup.py
+
+ARG DEPS_ARGS="GPU=1 WITH_TFLITE=0 WITH_PT=0 WITH_ORT=0 WITH_UNIT_TESTS=0"
+RUN if [ "$DEPS_ARGS" = "" ]; then ./get_deps.sh; else env $DEPS_ARGS ./get_deps.sh; fi
+
+ARG BUILD_ARGS="GPU=1 SHOW=1 WITH_TFLITE=0 WITH_PT=0 WITH_ORT=0 WITH_UNIT_TESTS=0"
+
+#RUN apt-get install -y libegl1-mesa-dev freeglut3-dev
+
+RUN bash -c "set -e &&\
+    . ./opt/readies/bin/sourced ./profile.d &&\
+    make -C opt build $BUILD_ARGS"
+
+# build RedisGears
+WORKDIR /build
+
+RUN git clone --recursive https://github.com/RedisGears/RedisGears.git
+RUN cd RedisGears && git checkout tags/v${GEARS_VER} && ./deps/readies/bin/getpy2 && make setup && make fetch && make all
+
+#----------------------------------------------------------------------------------------------
+FROM nvcr.io/nvidia/l4t-base:r32.4.4
+
+ARG ARCH
+ARG GEARS_VER
+
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+
+RUN apt-get -qq update && apt-get -q install -y libgomp1 build-essential libatlas-base-dev cmake
+
+ENV REDIS_MODULES /usr/lib/redis/modules
+RUN mkdir -p $REDIS_MODULES/
+RUN mkdir /artifacts
+
+COPY --from=redis /usr/local/ /usr/local/
+COPY --from=builder /build/RedisAI/install-gpu/ $REDIS_MODULES/
+COPY --from=builder /build/RedisGears/bin/linux-${ARCH}-release/ $REDIS_MODULES/
+COPY --from=builder /build/RedisGears/artifacts/release/ /artifacts/
+
+RUN $REDIS_MODULES/python3_${GEARS_VER}/bin/python3 -m pip install --upgrade pip
+RUN $REDIS_MODULES/python3_${GEARS_VER}/bin/python3 -m pip install setuptools==49.2.0
+
+# build numpy from source to use ATLAS library
+RUN env LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu:$LD_LIBRARY_PATH $REDIS_MODULES/python3_${GEARS_VER}/bin/python3 -m pip install --no-binary :all: numpy
+RUN $REDIS_MODULES/python3_${GEARS_VER}/bin/python3 -m pip install opencv-python imageio
+
+EXPOSE 6379
+ENTRYPOINT ["redis-server"]
+
+ENV GEARS_VER ${GEARS_VER}
+
+CMD ["--loadmodule", "/usr/lib/redis/modules/redisai.so", \
+     "--loadmodule", "/usr/lib/redis/modules/redisgears.so", \
+     "PythonHomeDir", "/usr/lib/redis/modules/python3_$GEARS_VER/", \
+     "PythonInstallationDir", "/usr/lib/redis/modules/"]

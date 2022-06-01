@@ -1,0 +1,53 @@
+--- gear.py	2021-03-29 17:15:04.726216533 -0500
++++ gear.py.updated	2021-03-29 17:14:34.195958815 -0500
+@@ -27,6 +27,7 @@
+     return res
+ 
+ def addToGraphRunner(x):
++    x = x['value']
+     try:
+         xlog('addToGraphRunner:', 'count=', x['count'])
+ 
+@@ -54,7 +55,7 @@
+         animal = index[str(res.index(res1[0]) - 1)][1]
+         xlog('addToGraphRunner:', 'animal=', animal)
+ 
+-        return (animal, x['img'])
++        return animal, x['img']
+     except:
+         xlog('addToGraphRunner: error:', sys.exc_info()[0])
+ 
+@@ -62,21 +63,24 @@
+     # save animal name into a new stream
+     try:
+         redisgears.executeCommand('xadd', 'cats', 'MAXLEN', '~', str(MAX_IMAGES), '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x[1]).decode('utf8'))
++        xlog('addToStream: ', x[0])
+     except:
+         xlog('addToStream: error:', sys.exc_info()[0])
+ 
+ def shouldTakeFrame(x):
++    v = x['value']
+     try:
+         global framesToDrop
+         framesToDrop += 1
+-        xlog('shouldTakeFrame', x['count'], (framesToDrop % 10 == 0))
++        xlog('shouldTakeFrame', v['count'], (framesToDrop % 10 == 0))
+         return framesToDrop % 10 == 0
+     except:
+         xlog('shouldTakeFrame: error:', sys.exc_info()[0])
+ 
+ def passAll(x):
++    v = x['value']
+     try:
+-        redisgears.executeCommand('xadd', 'all', 'MAXLEN', '~', str(MAX_IMAGES), '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(x['img']).decode('utf8'))
++        redisgears.executeCommand('xadd', 'all', 'MAXLEN', '~', str(MAX_IMAGES), '*', 'image', 'data:image/jpeg;base64,' + base64.b64encode(v['img']).decode('utf8'))
+     except:
+         xlog('passAll: error:', sys.exc_info()[0])
+ 
+@@ -87,4 +91,5 @@
+     map(addToGraphRunner).\
+     filter(lambda x: 'cat' in x[0]).\
+     foreach(addToStream).\
+-    register('camera:0')
++    register(prefix='camera:0')
++
