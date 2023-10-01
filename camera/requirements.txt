@@ -1,2 +1,2 @@
-opencv-python-headless<4.5
+opencv-python-headless<4.8.1.78
 redis
